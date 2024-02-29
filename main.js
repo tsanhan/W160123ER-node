@@ -1,1 +1,1 @@
-require('./fs');
+require('./path');

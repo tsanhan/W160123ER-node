@@ -1,5 +1,11 @@
 const FileSystem = require('fs');
-const {mkdir, readdir, writeFile} = require('fs/promises');
+const {
+    mkdir,
+    readdir,
+    writeFile,
+    unlink,
+    rmdir 
+} = require('fs/promises');
 
 //#region create a dir
 
@@ -60,14 +66,25 @@ const {mkdir, readdir, writeFile} = require('fs/promises');
 //#endregion
 
 (async () => {
-    await mkdir("./test", { recursive: true });
-    // in side the test dir create  3 file called testing-[num].txt
-    // the content of each file will be: file number [num]
-    // do this using a for loop
-
-
-    // list all the files in the test dir as an array (you should use readdir method)
-
-    // because all this method is async you should use try/catch for exaction handling
+    // try {
+    //     await mkdir("./test", {
+    //         recursive: true
+    //     });
+    //     for (let i = 0; i < 3; i++) {
+    //         await writeFile(`${__dirname}/test/testing-${i}.txt`, `file number ${i}`);
+    //         console.log(`fs wrote to a file! testing-${i}.txt`);
+    //     }
+    //     const files = await readdir(`${__dirname}/test`);
+    //     console.log(files);
+    // } catch (error) {
+    //     console.log(error.message);
+    // }
+    
+    readdir(`${__dirname}/test`)
+        .then(files => 
+            files.forEach(file => unlink(`${__dirname}/test/${file}`)))
+        .then(() => rmdir(`${__dirname}/test`))
+        .catch(err => console.log(err.message));
 
 })();
+
