@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const { mkdir, readdir, writeFile, unlink, rmdir, access } = require('fs/promises');
 
 const users = [
@@ -11,8 +12,14 @@ const users = [
 const removeFilesAndFolder = async () => {
     try {
         const files = await readdir(`${__dirname}/users`);
-        files.forEach(async file => unlink(`${__dirname}/users/${file}`));
-        rmdir(`${__dirname}/users`);
+        let isKeepFolder = false;
+        files.forEach(async file => {
+            const name = `${__dirname}/users/${file}`;
+            const isNotTxt = path.extname(name) !== '.txt'
+            isKeepFolder = isNotTxt || isKeepFolder;
+            !isNotTxt && unlink(name);
+        });
+        !isKeepFolder && rmdir(`${__dirname}/users`);
         return Promise.resolve();
     } catch (err) {
         console.log(err.message);
