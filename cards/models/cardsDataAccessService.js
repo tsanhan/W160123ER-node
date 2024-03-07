@@ -37,11 +37,11 @@ const findOne = async (id) => {
     return Promise.resolve("findOne not in mongoDB");
 }
 
-const create = async (card) => {
+const create = async (normalizedCard) => {
     if (DB === 'MONGODB') {
         try {
-            card._id = "123";
-            return Promise.resolve(card);
+            normalizedCard._id = "123";
+            return Promise.resolve(normalizedCard);
         } catch (error) {
             error.status = 404;
             return Promise.reject(error);
@@ -62,8 +62,48 @@ const findMyCards = async (userId) => {
     return Promise.resolve("findMyCards not in mongoDB");
 }
 
+const update = async (cardId, normalizedCard) => {
+    if (DB === 'MONGODB') {
+        try {
+            return Promise.resolve(`${cardId} updated `);
+        } catch (error) {
+            error.status = 400;
+            return Promise.reject(error);
+        }
+    }
+    return Promise.resolve("update not in mongoDB");
+}
+
+const like = async (cardId, userId) => {
+    if (DB === 'MONGODB') {
+        try {
+            return Promise.resolve(`card no. ${cardId} liked!`);
+        } catch (error) {
+            error.status = 400;
+            return Promise.reject(error);
+        }
+    }
+    return Promise.resolve("like not in mongoDB");
+}
+
+const remove = async (cardId) => {
+    if (DB === 'MONGODB') {
+        try {
+            return Promise.resolve(`card no. ${cardId} removed!`);
+        } catch (error) {
+            error.status = 400;
+            return Promise.reject(error);
+        }
+    }
+    return Promise.resolve("remove not in mongoDB");
+}
+
 exports.getCards = getCards;
 exports.find = find;
 exports.findOne = findOne;
 exports.create = create;
 exports.findMyCards = findMyCards;
+exports.update = update;
+exports.like = like;
+exports.remove = remove;
+
