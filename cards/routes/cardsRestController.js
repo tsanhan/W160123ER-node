@@ -80,7 +80,7 @@ router.delete("/:id", async (req, res) => {
     } catch (error) {
       return handleError(res, error.status || 500, error.message);
     }
-  });
+});
 
 
 module.exports = router;
