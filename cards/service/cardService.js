@@ -37,12 +37,12 @@ const getCard = async cardId => {
   }
 };
 
-const createCard = async rawCard => {
-  const { error } = validateCard(rawCard);
-  if (error) return handleJoiError(error);
+const createCard = async normalizedCard => {
+  // const { error } = validateCard(rawCard);
+  // if (error) return handleJoiError(error);
 
   try {
-    let card = { ...rawCard };
+    let card = { ...normalizedCard };
     card.createdAt = new Date();
     card = await create(card);
     return Promise.resolve(card);
