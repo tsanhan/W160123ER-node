@@ -1,6 +1,6 @@
 {
   "name": "business-card-app",
-  "version": "2.4.123",
+  "version": "1.2.3",
   "description": "",
   "main": "server.js",
   "scripts": {
