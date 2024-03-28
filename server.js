@@ -3,6 +3,7 @@ const express = require("express");
 const { handleError } = require("./utils/handleErrors");
 const app = express();
 const router = require("./router/router");
+const connectToDb = require('./db/dbService')
 const cors = require("./middlewares/cors");
 const logger = require("./logger/loggerService");
 
@@ -17,6 +18,7 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 8181;
-app.listen(PORT, () =>
-  console.log(chalk.magentaBright(`Listening on: http://localhost:${PORT}`))
-);
+app.listen(PORT, () => {
+  console.log(chalk.magentaBright(`Listening on: http://localhost:${PORT}`));
+  connectToDb(); 
+});
