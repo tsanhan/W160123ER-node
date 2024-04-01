@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const chalk = require('chalk');
 const mongoose = require('mongoose');
-const { date, array, required } = require('joi');
+const { date, array, required, bool } = require('joi');
 const { trim, lowerCase, min } = require('lodash');
 
 // this is the schema creation part.
@@ -19,23 +19,10 @@ const nameSchema = new mongoose.Schema({
 });
 
 const schema = new mongoose.Schema({
-    name: {
-        type: String,
-        trim: true,
-        lowerCase: true,
-        default: 'John Doe',
-        unique: true,
-        required: true,
-        match: RegExp(/^[a-zA-Z0-9]{3,30}$/),
-    },
-    age: Number,
-    email: String,
-    date: {
-        type: Date, 
-        default: Date.now
-    },
-    id: mongoose.Types.ObjectId,
-    array: [String]
+    string: String,
+    number: Number,
+    bool: Boolean,
+    date: {type: Date, default: Date.now},
 }); 
 const Test = mongoose.model('test', schema); // this is the model creation part.
 
@@ -43,11 +30,10 @@ app.use(express.json());
 
 app.post('/', async (req, res) => {
     try {
-        const {body: dataFromReqBody} = req;
-        console.log("dataFromReqBody",dataFromReqBody);
-        const user = new Test(dataFromReqBody);
-        await user.save();
-        res.send(user);
+        const {body} = req;
+        const instance = new Test(body);
+        await instance.save();
+        res.send(instance);
     } catch (error) {
         console.log(chalk.red(`Mongoose schema error: ${error.message}`));
         res.status(400).send(error.message);

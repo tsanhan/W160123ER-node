@@ -1,15 +1,15 @@
 const express = require("express");
 const { handleError } = require("../../utils/handleErrors");
+const normalizeCard = require("../helpers/normalizeCard");
 const {
   getCards,
+  getMyCards,
   getCard,
   createCard,
-  getMyCards,
   updateCard,
   likeCard,
   deleteCard,
-} = require("../service/cardService");
-const normalizeCard = require("../helpers/normalizeCard");
+} = require("../models/cardsAccessDataService");
 const validateCard = require("../validations/cardValidationService");
 const router = express.Router();
 
@@ -33,8 +33,8 @@ router.get("/my-cards", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const card = await getCard(id);
     return res.send(card);
   } catch (error) {
@@ -44,12 +44,13 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    let card = { ...req.body };
-    
-    const {error}= validateCard(card);
-    if (error) return handleError(res, 400, error.details[0].message);
+    let card = req.body;
+    const user = { _id: "6376667871c9c1d0b30481f7" };
+    const { error } = validateCard(card);
+    if (error)
+      return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
 
-    card = await normalizeCard(card);
+    card = await normalizeCard(card, user._id);
     card = await createCard(card);
     return res.status(201).send(card);
   } catch (error) {
@@ -59,8 +60,15 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const card = await updateCard(id, req.body);
+    let card = req.body;
+    const cardId = req.params.id;
+
+    const { error } = validateCard(card);
+    if (error)
+      return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
+
+    card = await normalizeCard(card);
+    card = await updateCard(cardId, card);
     return res.send(card);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);
@@ -69,9 +77,9 @@ router.put("/:id", async (req, res) => {
 
 router.patch("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const userId = "123456";
-    const card = await likeCard(id, userId);
+    const cardId = req.params.id;
+    const user = { _id: "6376667871c9c1d0b30481f7" };
+    const card = await likeCard(cardId, user);
     return res.send(card);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);
@@ -80,8 +88,9 @@ router.patch("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const card = await deleteCard(id);
+    const cardId = req.params.id;
+    const user = { _id: "6376667871c9c1d0b30481f7" };
+    const card = await deleteCard(cardId, user);
     return res.send(card);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);

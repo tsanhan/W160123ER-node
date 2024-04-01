@@ -1,5 +1,6 @@
 const express = require("express");
 const { handleError } = require("../../utils/handleErrors");
+const normalizeUser = require("../helpers/normalizeUser");
 const {
   registerUser,
   loginUser,
@@ -8,12 +9,24 @@ const {
   updateUser,
   changeUserBusinessStatus,
   deleteUser,
-} = require("../service/userService");
+} = require("../models/usersAccessDataService");
+
+const {
+  validateRegistration,
+  validateLogin,
+  validateUserUpdate,
+} = require("../validations/userValidationService");
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const user = await registerUser(req.body);
+    let user = req.body;
+    const { error } = validateRegistration(user);
+    if (error)
+      return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
+
+    user = normalizeUser(user);
+    user = await registerUser(user);
     return res.status(201).send(user);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);
@@ -22,7 +35,12 @@ router.post("/", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    const user = await loginUser(req.body);
+    let user = req.body;
+    const { error } = validateLogin(user);
+    if (error)
+      return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
+
+    user = await loginUser(req.body);
     return res.send(user);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);
@@ -51,7 +69,13 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await updateUser(id, req.body);
+    let user = req.body;
+    const { error } = validateUserUpdate(user);
+    if (error)
+      return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
+
+    user = normalizeUser(user);
+    user = await updateUser(id, user);
     return res.send(user);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);

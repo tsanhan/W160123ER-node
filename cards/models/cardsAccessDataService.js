@@ -1,10 +1,12 @@
+const Card = require("./mongodb/Card");
+
 const DB = process.env.DB || "MONGODB";
 
-const find = async () => {
+const getCards = async () => {
   if (DB === "MONGODB") {
     try {
       //   throw new Error("Opss... i did it again!");
-      return Promise.resolve([{ cards: "in mongodb" }]);
+      return Promise.resolve([{ card: "in mongodb" }]);
     } catch (error) {
       error.status = 404;
       return Promise.reject(error);
@@ -13,7 +15,7 @@ const find = async () => {
   return Promise.resolve("get cards not in mongodb");
 };
 
-const findMyCards = async userId => {
+const getMyCards = async userId => {
   if (DB === "MONGODB") {
     try {
       //   throw new Error("Opss... i did it again!");
@@ -26,11 +28,11 @@ const findMyCards = async userId => {
   return Promise.resolve("get card not in mongodb");
 };
 
-const findOne = async cardId => {
+const getCard = async cardId => {
   if (DB === "MONGODB") {
     try {
       //   throw new Error("Opss... i did it again!");
-      return Promise.resolve(`in findOne card no: ${cardId}`);
+      return Promise.resolve(`in getCard card no: ${cardId}`);
     } catch (error) {
       error.status = 404;
       return Promise.reject(error);
@@ -39,45 +41,45 @@ const findOne = async cardId => {
   return Promise.resolve("get card not in mongodb");
 };
 
-const create = async normalizedCard => {
+const createCard = async normalizedCard => {
   if (DB === "MONGODB") {
     try {
-      normalizedCard._id = "123456";
-      //   throw new Error("Opss... i did it again!");
-      return Promise.resolve(normalizedCard);
+      let card = new Card(normalizedCard);
+      card = await card.save();
+      return Promise.resolve(card);
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
     }
   }
-  return Promise.resolve("create card not in mongodb");
+  return Promise.resolve("createCard card not in mongodb");
 };
 
-const update = async (cardId, normalizedCard) => {
+const updateCard = async (cardId, normalizedCard) => {
   if (DB === "MONGODB") {
     try {
-      return Promise.resolve(`in update card no. ${cardId}`);
+      return Promise.resolve({ ...normalizedCard, cardId });
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
     }
   }
-  return Promise.resolve("card update not in mongodb");
+  return Promise.resolve("card updateCard not in mongodb");
 };
 
-const like = async (cardId, userId) => {
+const likeCard = async (cardId, userId) => {
   if (DB === "MONGODB") {
     try {
-      return Promise.resolve(`card no. ${cardId} liked!`);
+      return Promise.resolve({ cardId, userId });
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
     }
   }
-  return Promise.resolve("card liked not in mongodb");
+  return Promise.resolve("card likeCard not in mongodb");
 };
 
-const remove = async cardId => {
+const deleteCard = async (cardId, user) => {
   if (DB === "MONGODB") {
     try {
       return Promise.resolve(`card no. ${cardId} deleted!`);
@@ -89,10 +91,10 @@ const remove = async cardId => {
   return Promise.resolve("card deleted not in mongodb");
 };
 
-exports.find = find;
-exports.findMyCards = findMyCards;
-exports.findOne = findOne;
-exports.create = create;
-exports.update = update;
-exports.like = like;
-exports.remove = remove;
+exports.getCards = getCards;
+exports.getMyCards = getMyCards;
+exports.getCard = getCard;
+exports.createCard = createCard;
+exports.updateCard = updateCard;
+exports.likeCard = likeCard;
+exports.deleteCard = deleteCard;

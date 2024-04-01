@@ -1,6 +1,6 @@
 const DB = process.env.DB || "MONGODB";
 
-const register = async normalizedUser => {
+const registerUser = async normalizedUser => {
   if (DB === "MONGODB") {
     try {
       normalizedUser._id = "123456";
@@ -11,23 +11,22 @@ const register = async normalizedUser => {
       return Promise.reject(error);
     }
   }
-  return Promise.resolve("register new user not in mongodb");
+  return Promise.resolve("registerUser new user not in mongodb");
 };
 
-const login = async user => {
+const loginUser = async user => {
   if (DB === "MONGODB") {
     try {
-      //   throw new Error("Opss... i did it again!");
-      return Promise.resolve("in login");
+      return Promise.resolve({ ...user, token: "a2a2a2" });
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
     }
   }
-  return Promise.resolve("login user not in mongodb");
+  return Promise.resolve("loginUser user not in mongodb");
 };
 
-const find = async () => {
+const getUsers = async () => {
   if (DB === "MONGODB") {
     try {
       //   throw new Error("Opss... i did it again!");
@@ -40,7 +39,7 @@ const find = async () => {
   return Promise.resolve("get users not in mongodb");
 };
 
-const findOne = async userId => {
+const getUser = async userId => {
   if (DB === "MONGODB") {
     try {
       //   throw new Error("Opss... i did it again!");
@@ -53,10 +52,10 @@ const findOne = async userId => {
   return Promise.resolve("get user not in mongodb");
 };
 
-const update = async (userId, normalizedUser) => {
+const updateUser = async (userId, normalizedUser) => {
   if (DB === "MONGODB") {
     try {
-      return Promise.resolve(`user no. ${userId} updated!`);
+      return Promise.resolve({ normalizedUser, userId });
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
@@ -65,7 +64,7 @@ const update = async (userId, normalizedUser) => {
   return Promise.resolve("card update not in mongodb");
 };
 
-const changeIsBizStatus = async userId => {
+const changeUserBusinessStatus = async userId => {
   if (DB === "MONGODB") {
     try {
       return Promise.resolve(`user no. ${userId} change his business status!`);
@@ -77,7 +76,7 @@ const changeIsBizStatus = async userId => {
   return Promise.resolve("card liked not in mongodb");
 };
 
-const remove = async userId => {
+const deleteUser = async userId => {
   if (DB === "MONGODB") {
     try {
       return Promise.resolve(`user no. ${userId} deleted!`);
@@ -89,10 +88,10 @@ const remove = async userId => {
   return Promise.resolve("card deleted not in mongodb");
 };
 
-exports.register = register;
-exports.login = login;
-exports.find = find;
-exports.findOne = findOne;
-exports.update = update;
-exports.changeIsBizStatus = changeIsBizStatus;
-exports.remove = remove;
+exports.registerUser = registerUser;
+exports.loginUser = loginUser;
+exports.getUsers = getUsers;
+exports.getUser = getUser;
+exports.updateUser = updateUser;
+exports.changeUserBusinessStatus = changeUserBusinessStatus;
+exports.deleteUser = deleteUser;
