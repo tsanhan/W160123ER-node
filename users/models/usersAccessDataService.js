@@ -1,11 +1,16 @@
 const DB = process.env.DB || "MONGODB";
+const User = require("./mongodb/User");
 
 const registerUser = async normalizedUser => {
   if (DB === "MONGODB") {
     try {
-      normalizedUser._id = "123456";
-      //   throw new Error("Opss... i did it again!");
-      return Promise.resolve(normalizedUser);
+      const { email } = normalizedUser;
+      let user = await User.findOne({ email });
+      if (user) throw new Error("User already registered");
+      user = new User(normalizedUser);
+      user = await user.save();
+      user = lodash.pick(user, ["name", "email", "_id"]);
+      return Promise.resolve(user);
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);

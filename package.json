@@ -8,7 +8,8 @@
     "test": "node test.js",
     "dev": "nodemon .",
     "app": "npm i && nodemon .",
-    "express-ex": "nodemon ./express-ex/index.js"
+    "express-ex": "nodemon ./express-ex/index.js",
+    "mongoose-ex": "nodemon ./examples/mongoose/app.js"
   },
   "author": "",
   "license": "ISC",
