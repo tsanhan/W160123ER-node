@@ -17,6 +17,7 @@ const {
   validateUserUpdate,
 } = require("../validations/userValidationService");
 const { generateUserPassword } = require("../helpers/bcrypt");
+const { auth } = require("../../auth/authService");
 const router = express.Router();
 
 router.post("/", async (req, res) => {
@@ -49,8 +50,11 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/",auth, async (req, res) => {
   try {
+    const {isAdmin} = req.user;
+    if (!isAdmin) return handleError(res, 403, "Access denied");
+
     const users = await getUsers();
     return res.send(users);
   } catch (error) {
@@ -58,7 +62,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id",auth, async (req, res) => {
   try {
     const { id } = req.params;
     const user = await getUser(id);

@@ -1,4 +1,5 @@
 const DB = process.env.DB || "MONGODB";
+const { generateAuthToken } = require("../../auth/Providers/jwt");
 const { comparePassword } = require("../helpers/bcrypt");
 const User = require("./mongodb/User");
 const lodash = require("lodash");
@@ -27,8 +28,8 @@ const loginUser = async ({email, password}) => {
       if (!user) throw new Error("Invalid email or password");
       const validPassword = comparePassword(password, user.password);
       if (!validPassword) throw new Error("Invalid email or password");
-
-      return Promise.resolve("user Logged in");
+      const token = generateAuthToken(user)
+      return Promise.resolve(token);
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
@@ -40,8 +41,8 @@ const loginUser = async ({email, password}) => {
 const getUsers = async () => {
   if (DB === "MONGODB") {
     try {
-      //   throw new Error("Opss... i did it again!");
-      return Promise.resolve([{ user: "David Yakin" }]);
+      const users = await User.find();
+      return Promise.resolve(users);
     } catch (error) {
       error.status = 404;
       return Promise.reject(error);
