@@ -17,6 +17,7 @@ const generateInitialDataUsers = async () => {
     const {users} = data;
     users.forEach(async user => {
         try {
+            
             await registerUser(user);
         } catch (error) {
             console.log(chalk.red(error.message));
