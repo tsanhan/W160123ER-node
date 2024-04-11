@@ -1,13 +1,21 @@
 const DB = process.env.DB || "MONGODB";
-const { generateAuthToken } = require("../../auth/Providers/jwt");
-const { comparePassword } = require("../helpers/bcrypt");
+const {
+  generateAuthToken
+} = require("../../auth/Providers/jwt");
+const {
+  comparePassword
+} = require("../helpers/bcrypt");
 const User = require("./mongodb/User");
 const lodash = require("lodash");
 const registerUser = async normalizedUser => {
   if (DB === "MONGODB") {
     try {
-      const { email } = normalizedUser;
-      let user = await User.findOne({ email });
+      const {
+        email
+      } = normalizedUser;
+      let user = await User.findOne({
+        email
+      });
       if (user) throw new Error("User already registered");
       user = new User(normalizedUser);
       user = await user.save();
@@ -21,10 +29,15 @@ const registerUser = async normalizedUser => {
   return Promise.resolve("registerUser new user not in mongodb");
 };
 
-const loginUser = async ({email, password}) => {
+const loginUser = async ({
+  email,
+  password
+}) => {
   if (DB === "MONGODB") {
     try {
-      const user = await User.findOne({email});
+      const user = await User.findOne({
+        email
+      });
       if (!user) throw new Error("Invalid email or password");
       const validPassword = comparePassword(password, user.password);
       if (!validPassword) throw new Error("Invalid email or password");
@@ -67,7 +80,10 @@ const getUser = async userId => {
 const updateUser = async (userId, normalizedUser) => {
   if (DB === "MONGODB") {
     try {
-      return Promise.resolve({ normalizedUser, userId });
+      return Promise.resolve({
+        normalizedUser,
+        userId
+      });
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
@@ -107,3 +123,4 @@ exports.getUser = getUser;
 exports.updateUser = updateUser;
 exports.changeUserBusinessStatus = changeUserBusinessStatus;
 exports.deleteUser = deleteUser;
+

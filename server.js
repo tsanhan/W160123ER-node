@@ -7,6 +7,7 @@ const connectToDb = require('./db/dbService')
 const cors = require("./middlewares/cors");
 const logger = require("./logger/loggerService");
 const config = require("config");
+const { generateInitialData } = require("./initialData/initialDataService");
 
 
 
@@ -23,7 +24,8 @@ app.use((err, req, res, next) => {
 
 const PORT = config.get('PORT');
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(chalk.magentaBright(`Listening on: http://localhost:${PORT}`));
-  connectToDb();
+  await connectToDb();
+  generateInitialData();
 });
